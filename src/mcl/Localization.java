@@ -6,6 +6,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import lejos.robotics.mapping.MenuAction;
 import lejos.robotics.mapping.NavigationModel.NavEvent;
+import lejos.robotics.RangeReading;
 import lejos.robotics.localization.*;
 
 /**
@@ -42,10 +43,12 @@ public class Localization extends ConfigDetails {
 	    /* Adding buttons get Pose and New References */
 		commandPanel.add(getPose);
 		commandPanel.add(newRefButton);
+		commandPanel.add(getDesvio);
 		
 		/* Until connected, the buttons must be disable */
 		getPose.setEnabled(false);
 		newRefButton.setEnabled(false);
+		getDesvio.setEnabled(false);
 	
 		/* When Get pose is pressed, we call the MCL Pose
 		* to read the environment and get the actual pose.
@@ -58,6 +61,7 @@ public class Localization extends ConfigDetails {
 				model.getRemoteParticles();
 				/* Estimated the actual pose */
 				model.getEstimatedPose();
+				
 				//System.out.println("Max weight:" + model.getParticles().getMaxWeight());
 				/* Get readings of the particles */
 				model.getRemoteReadings();
@@ -74,6 +78,18 @@ public class Localization extends ConfigDetails {
 				model.randomMove();
 				/* Get the new particles */
 				model.getRemoteParticles();
+			}
+		});
+		
+		/* When the get Standard Deviation button is pressed: */
+		getDesvio.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				/* Print Standard Deviation */
+				System.out.println("Erro em X: " + model.getMCL().getXRange());
+				System.out.println("Erro em Y: " + model.getMCL().getYRange());
+				System.out.print("Real Frente: "); 
+				float read = model.getReadings().get(1).getRange();
+				System.out.println(read);
 			}
 		});
   	}
@@ -114,6 +130,7 @@ public class Localization extends ConfigDetails {
 		/* Enable buttons */
 		getPose.setEnabled(true);
 		newRefButton.setEnabled(true);
+		getDesvio.setEnabled(true);
 	}
 	
 	/**
